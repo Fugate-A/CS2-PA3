@@ -136,18 +136,118 @@ public class PA3 {
 		// call the two algos below:
 		Bellman( SourceVertex, Edges, VerticesToMake, OutputTable, AllVertices );
 		
-		Floyd();
+		Floyd( VerticesToMake, Edges, AllVertices );
 	}
 
 	/*
 	 *  comments here
 	 */
-	private static void Floyd()
+	private static void Floyd( int nov, int noe, VertexStructure[] verts  )
 	{
-		System.out.println("floyds");
+		int[][] FloydOutput = new int[nov][nov];
 		
+		for( int i = 0; i < nov; i++ )
+		{
+			for( int j = 0; j < nov; j++ )
+			{
+				FloydOutput[i][j] = Integer.MAX_VALUE;
+			}
+		}
+		
+		for( int i = 0; i < nov; i++ )
+		{
+			FloydOutput[i][i] = 0;
+		}
+		
+		for( int i = 0; i < nov; i++ )
+		{
+			for( int j = 0; j < verts[i].EdgeCount; j++ )
+			{
+				VertexStructure UseVA = null;
+				VertexStructure UseVB = null;
+				
+				if( verts[i].label == verts[i].Edges[j].VA.label )
+				{
+					UseVA = verts[i].Edges[j].VA;
+					UseVB = verts[i].Edges[j].VB;
+				}
+				
+				else
+				{
+					UseVA = verts[i].Edges[j].VB;
+					UseVB = verts[i].Edges[j].VA;
+				}
+				FloydOutput[UseVA.label - 1][UseVB.label - 1] = verts[i].Edges[j].weight;
+			}
+		}
+		
+		//PrintFloyd( FloydOutput, nov );
+		
+		for( int i = 0; i < nov; i++ )
+		{
+			for( int j = 0; j < nov; j++ )
+			{
+				for( int k = 0; k < nov; k++ )
+				{				
+					if( FloydOutput[j][k] > FloydOutput[j][i] + FloydOutput[i][k] && FloydOutput[j][i] != Integer.MAX_VALUE && FloydOutput[i][k] != Integer.MAX_VALUE )
+					{
+						FloydOutput[j][k] = FloydOutput[j][i] + FloydOutput[i][k];
+					}
+				}
+			}
+		}
+		
+		
+		//PrintFloyd( FloydOutput, nov );
 		
 		//cop3503-asn3-output-Fugate-Andrew-fw.txt
+		
+		try
+		{
+			FileWriter floyd = new FileWriter("cop3503-asn3-output-Fugate-Andrew-fw.txt");
+
+			for (int i = 0; i < nov + 1; i++)
+			{
+				if (i == 0)
+				{
+					floyd.write("" + nov + "\n");
+				}
+
+				else
+				{
+					floyd.write("\n");
+					
+					for( int j = 0; j < nov; j++ )
+					{
+						floyd.write( FloydOutput[i-1][j] + " " );
+					}
+				}
+			}
+			floyd.close();
+		}
+
+		catch (Exception e)
+		{
+			e.getStackTrace();
+		}
+	}
+
+	/*
+	 * takes in the output table of floyd and number of vertices and prints it...mostly used
+	 * for testing
+	 */
+	private static void PrintFloyd(int[][] t, int nov )
+	{
+		System.out.print("\n\n" + nov);
+		
+		for( int i = 0; i < nov; i++ )
+		{
+			System.out.println();
+			for( int j = 0; j < nov; j++ )
+			{
+				System.out.print( t[i][j] + " " );
+			}
+		}
 	}
 
 	/* 
@@ -157,7 +257,7 @@ public class PA3 {
 	 */
 	private static void Bellman( int SV, int noe, int nov, int[][] OutputTable, VertexStructure[] AllVertices )
 	{
-		System.out.println("bellman");
+		//System.out.println("bellman");
 		
 		OutputTable[SV - 1][1] = 0;
 		OutputTable[SV - 1][2] = 0;
