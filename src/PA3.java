@@ -210,7 +210,7 @@ public class PA3 {
 			{
 				if (i == 0)
 				{
-					floyd.write("" + nov + "\n");
+					floyd.write("" + nov);
 				}
 
 				else
