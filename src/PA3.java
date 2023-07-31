@@ -134,224 +134,192 @@ public class PA3 {
 
 		// ----------------------------------------------------------------------------------------------------------------------------------------------
 		// call the two algos below:
-		Bellman( SourceVertex, Edges, VerticesToMake, OutputTable, AllVertices );
-		
-		Floyd( VerticesToMake, AllVertices );
+		Bellman(SourceVertex, Edges, VerticesToMake, OutputTable, AllVertices);
+
+		Floyd(VerticesToMake, AllVertices);
 	}
 
 	/*
-	 *  Floyd warshall method takes in the number of vertices in the graph and my custom vertex structure.
-	 *  The algorithm initializes an array that is NoV x NoV big and sets the value to infinity (integer max).
-	 *  Then the self loops are set to 0 which should make a diagonal ( [0][0], [1][1], [2][2], and so on ).
-	 *  Then the algorithm runs through 3 loops and compares the costs between every vertex and sees if there is a cheaper way found. 
-	 *  Once the algo has ran, the floyd warshall file is written to.
+	 * Floyd warshall method takes in the number of vertices in the graph and my
+	 * custom vertex structure. The algorithm initializes an array that is NoV x NoV
+	 * big and sets the value to infinity (integer max). Then the self loops are set
+	 * to 0 which should make a diagonal ( [0][0], [1][1], [2][2], and so on ). Then
+	 * the algorithm runs through 3 loops and compares the costs between every
+	 * vertex and sees if there is a cheaper way found. Once the algo has ran, the
+	 * floyd warshall file is written to.
 	 */
-	private static void Floyd( int nov, VertexStructure[] verts )
-	{
+	private static void Floyd(int nov, VertexStructure[] verts) {
 		int[][] FloydOutput = new int[nov][nov];
-		
-		for( int i = 0; i < nov; i++ )
-		{
-			for( int j = 0; j < nov; j++ )
-			{
+
+		for (int i = 0; i < nov; i++) {
+			for (int j = 0; j < nov; j++) {
 				FloydOutput[i][j] = Integer.MAX_VALUE;
 			}
 		}
-		
-		for( int i = 0; i < nov; i++ )
-		{
+
+		for (int i = 0; i < nov; i++) {
 			FloydOutput[i][i] = 0;
 		}
-		
-		for( int i = 0; i < nov; i++ )
-		{
-			for( int j = 0; j < verts[i].EdgeCount; j++ )
-			{
+
+		for (int i = 0; i < nov; i++) {
+			for (int j = 0; j < verts[i].EdgeCount; j++) {
 				VertexStructure UseVA = null;
 				VertexStructure UseVB = null;
-				
-				if( verts[i].label == verts[i].Edges[j].VA.label )
-				{
+
+				if (verts[i].label == verts[i].Edges[j].VA.label) {
 					UseVA = verts[i].Edges[j].VA;
 					UseVB = verts[i].Edges[j].VB;
 				}
-				
-				else
-				{
+
+				else {
 					UseVA = verts[i].Edges[j].VB;
 					UseVB = verts[i].Edges[j].VA;
 				}
 				FloydOutput[UseVA.label - 1][UseVB.label - 1] = verts[i].Edges[j].weight;
 			}
 		}
-		
-		//PrintFloyd( FloydOutput, nov );
-		
-		for( int i = 0; i < nov; i++ )
-		{
-			for( int j = 0; j < nov; j++ )
-			{
-				for( int k = 0; k < nov; k++ )
-				{				
-					if( FloydOutput[j][k] > FloydOutput[j][i] + FloydOutput[i][k] && FloydOutput[j][i] != Integer.MAX_VALUE && FloydOutput[i][k] != Integer.MAX_VALUE )
-					{
+
+		// PrintFloyd( FloydOutput, nov );
+
+		for (int i = 0; i < nov; i++) {
+			for (int j = 0; j < nov; j++) {
+				for (int k = 0; k < nov; k++) {
+					if (FloydOutput[j][k] > FloydOutput[j][i] + FloydOutput[i][k]
+							&& FloydOutput[j][i] != Integer.MAX_VALUE && FloydOutput[i][k] != Integer.MAX_VALUE) {
 						FloydOutput[j][k] = FloydOutput[j][i] + FloydOutput[i][k];
 					}
 				}
 			}
 		}
-		
-		//PrintFloyd( FloydOutput, nov );
-		
-		//cop3503-asn3-output-Fugate-Andrew-fw.txt
-		
-		try
-		{
+
+		// PrintFloyd( FloydOutput, nov );
+
+		// cop3503-asn3-output-Fugate-Andrew-fw.txt
+
+		try {
 			FileWriter floyd = new FileWriter("cop3503-asn3-output-Fugate-Andrew-fw.txt");
 
-			for (int i = 0; i < nov + 1; i++)
-			{
-				if (i == 0)
-				{
+			for (int i = 0; i < nov + 1; i++) {
+				if (i == 0) {
 					floyd.write("" + nov);
 				}
 
-				else
-				{
+				else {
 					floyd.write("\n");
-					
-					for( int j = 0; j < nov; j++ )
-					{
-						floyd.write( FloydOutput[i-1][j] + " " );
+
+					for (int j = 0; j < nov; j++) {
+						floyd.write(FloydOutput[i - 1][j] + " ");
 					}
 				}
 			}
 			floyd.close();
 		}
 
-		catch (Exception e)
-		{
+		catch (Exception e) {
 			e.getStackTrace();
 		}
 	}
 
 	/*
-	 * takes in the output table of floyd and number of vertices and prints it...mostly used
-	 * for testing
+	 * takes in the output table of floyd and number of vertices and prints
+	 * it...mostly used for testing
 	 */
-	private static void PrintFloyd(int[][] t, int nov )
-	{
+	private static void PrintFloyd(int[][] t, int nov) {
 		System.out.print("\n\n" + nov);
-		
-		for( int i = 0; i < nov; i++ )
-		{
+
+		for (int i = 0; i < nov; i++) {
 			System.out.println();
-			for( int j = 0; j < nov; j++ )
-			{
-				System.out.print( t[i][j] + " " );
+			for (int j = 0; j < nov; j++) {
+				System.out.print(t[i][j] + " ");
 			}
 		}
 	}
 
-	/* 
-	 * Takes in the starting node, the number of edges and vertices, the initialized output (set to infinity etc), and my custom vertex structure.
-	 * Traverses the vertices in order and sets the costs and from-vertex's appropriately. Makes no greedy decisions which is where it differs from Dijkstra's. 
-	 * Outputs the table to the file "cop3503-asn3-output-Fugate-Andrew-bf.txt" by reusing the write to file method from PA2.
+	/*
+	 * Takes in the starting node, the number of edges and vertices, the initialized
+	 * output (set to infinity etc), and my custom vertex structure. Traverses the
+	 * vertices in order and sets the costs and from-vertex's appropriately. Makes
+	 * no greedy decisions which is where it differs from Dijkstra's. Outputs the
+	 * table to the file "cop3503-asn3-output-Fugate-Andrew-bf.txt" by reusing the
+	 * write to file method from PA2.
 	 */
-	private static void Bellman( int SV, int noe, int nov, int[][] OutputTable, VertexStructure[] AllVertices )
-	{
-		//System.out.println("bellman");
-		
+	private static void Bellman(int SV, int noe, int nov, int[][] OutputTable, VertexStructure[] AllVertices) {
+		// System.out.println("bellman");
+
 		OutputTable[SV - 1][1] = 0;
 		OutputTable[SV - 1][2] = 0;
-		
-		int[] TravelOrder = new int[nov]; 
+
+		int[] TravelOrder = new int[nov];
 		TravelOrder[0] = SV;
-		
-		for( int i = 1; i < nov; i++ )
-		{
-			if( i < SV )
-			{
+
+		for (int i = 1; i < nov; i++) {
+			if (i < SV) {
 				TravelOrder[i] = i;
 			}
-			
-			else
-			{
+
+			else {
 				TravelOrder[i] = i + 1;
 			}
 		}
-		
-		/*for( int i = 0; i < nov; i++ )
-		{
-			System.out.println(TravelOrder[i]);
-		}*/
-		
-		for( int i = 0; i < nov - 1; i++ )
-		{
-			for( int j = 0; j < AllVertices[ TravelOrder[ i ] - 1 ].EdgeCount; j++ )
-			{
-				//PrintTable( OutputTable, nov );
-				
+
+		/*
+		 * for( int i = 0; i < nov; i++ ) { System.out.println(TravelOrder[i]); }
+		 */
+
+		for (int i = 0; i < nov - 1; i++) {
+			for (int j = 0; j < AllVertices[TravelOrder[i] - 1].EdgeCount; j++) {
+				// PrintTable( OutputTable, nov );
+
 				VertexStructure UseVA = null;
 				VertexStructure UseVB = null;
-				
-				if( AllVertices[ TravelOrder[ i ] - 1 ].Edges[j].VA == AllVertices[ TravelOrder[ i ] - 1 ] )
-				{
-					UseVA = AllVertices[ TravelOrder[ i ] - 1 ].Edges[j].VA;
-					UseVB = AllVertices[ TravelOrder[ i ] - 1 ].Edges[j].VB;					
+
+				if (AllVertices[TravelOrder[i] - 1].Edges[j].VA == AllVertices[TravelOrder[i] - 1]) {
+					UseVA = AllVertices[TravelOrder[i] - 1].Edges[j].VA;
+					UseVB = AllVertices[TravelOrder[i] - 1].Edges[j].VB;
 				}
-				
-				else
-				{
-					UseVA = AllVertices[ TravelOrder[ i ] - 1 ].Edges[j].VB;
-					UseVB = AllVertices[ TravelOrder[ i ] - 1 ].Edges[j].VA;		
+
+				else {
+					UseVA = AllVertices[TravelOrder[i] - 1].Edges[j].VB;
+					UseVB = AllVertices[TravelOrder[i] - 1].Edges[j].VA;
 				}
-				
-				if( OutputTable[UseVA.label - 1][1] == Integer.MAX_VALUE )
-				{
+
+				if (OutputTable[UseVA.label - 1][1] == Integer.MAX_VALUE) {
 					continue;
 				}
-				
-				else
-				{
-					if( UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1] < OutputTable[UseVB.label - 1][1] )
-					{
+
+				else {
+					if (UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1] < OutputTable[UseVB.label - 1][1]) {
 						OutputTable[UseVB.label - 1][1] = UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1];
 						OutputTable[UseVB.label - 1][2] = UseVA.label;
 					}
 				}
 			}
 		}
-		
-		for( int i = 0; i < nov; i++ )
-		{
-			//PrintTable( OutputTable, nov );
-			
+
+		for (int i = 0; i < nov; i++) {
+			// PrintTable( OutputTable, nov );
+
 			VertexStructure UseVA = null;
 			VertexStructure UseVB = null;
-			
-			for( int j = 0; j < AllVertices[ i ].EdgeCount; j++ )
-			{
-				if( AllVertices[ i ].Edges[j].VA == AllVertices[ i ] )
-				{
-					UseVA = AllVertices[ i ].Edges[j].VA;
-					UseVB = AllVertices[ i ].Edges[j].VB;					
+
+			for (int j = 0; j < AllVertices[i].EdgeCount; j++) {
+				if (AllVertices[i].Edges[j].VA == AllVertices[i]) {
+					UseVA = AllVertices[i].Edges[j].VA;
+					UseVB = AllVertices[i].Edges[j].VB;
 				}
-				
-				else
-				{
-					UseVA = AllVertices[ i ].Edges[j].VB;
-					UseVB = AllVertices[ i ].Edges[j].VA;		
+
+				else {
+					UseVA = AllVertices[i].Edges[j].VB;
+					UseVB = AllVertices[i].Edges[j].VA;
 				}
-				
-				if( UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1] < OutputTable[UseVB.label - 1][1] )
-				{
+
+				if (UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1] < OutputTable[UseVB.label - 1][1]) {
 					OutputTable[UseVB.label - 1][1] = UseVA.Edges[j].weight + OutputTable[UseVA.label - 1][1];
 					OutputTable[UseVB.label - 1][2] = UseVA.label;
 				}
-			}	
-		}		
-		WriteToFile( OutputTable, nov );
+			}
+		}
+		WriteToFile(OutputTable, nov);
 	}
 
 	/*
