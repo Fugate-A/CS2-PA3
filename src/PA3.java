@@ -136,13 +136,17 @@ public class PA3 {
 		// call the two algos below:
 		Bellman( SourceVertex, Edges, VerticesToMake, OutputTable, AllVertices );
 		
-		Floyd( VerticesToMake, Edges, AllVertices );
+		Floyd( VerticesToMake, AllVertices );
 	}
 
 	/*
-	 *  comments here
+	 *  Floyd warshall method takes in the number of vertices in the graph and my custom vertex structure.
+	 *  The algorithm initializes an array that is NoV x NoV big and sets the value to infinity (integer max).
+	 *  Then the self loops are set to 0 which should make a diagonal ( [0][0], [1][1], [2][2], and so on ).
+	 *  Then the algorithm runs through 3 loops and compares the costs between every vertex and sees if there is a cheaper way found. 
+	 *  Once the algo has ran, the floyd warshall file is written to.
 	 */
-	private static void Floyd( int nov, int noe, VertexStructure[] verts  )
+	private static void Floyd( int nov, VertexStructure[] verts )
 	{
 		int[][] FloydOutput = new int[nov][nov];
 		
@@ -196,7 +200,6 @@ public class PA3 {
 				}
 			}
 		}
-		
 		
 		//PrintFloyd( FloydOutput, nov );
 		
